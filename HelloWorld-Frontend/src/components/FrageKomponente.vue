@@ -2,7 +2,6 @@
   <h3>{{ title }}</h3>
   <div>
     <input v-model="FragenField" placeholder="frage" type="text">
-    <!-- <input v-model="AntwortField" placeholder="antwort" @keyup.enter="save()"> -->
     <button type="button" @click="save()">Save</button>
   </div>
   <div>
@@ -10,20 +9,15 @@
       <thead>
       <tr>
         <th>Frage</th>
-        <!-- <th>Antwort</th> -->
+
       </tr>
       </thead>
       <tbody>
       <tr v-if="items.length === 0">
-        <td colspan="2">Noch keine Aufgaben</td>
-      </tr>
-      <tr v-for="item in items" :key="item.id">
-        <td>{{ item.frage }}</td>
-        <!-- <td>{{ item.antwort }}</td> -->
       </tr>
       <tr>
         <td>{{ FragenField }}</td>
-        <!-- <td>{{ AntwortField }}</td> -->
+
       </tr>
       </tbody>
     </table>
@@ -44,34 +38,42 @@ const items: Ref<Fragen[]> = ref([]);
 const FragenField = ref('');
 
 function loadFragen() {
-  items.value = [];
-  fetchData('/Frage', 'GET', {}).then(result => {
-    result.forEach((frage: Fragen) => {
-      items.value.push(frage);
-    });
-  });
+  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
+  const endpoint = baseUrl + '/frage'
+  const requestOptions: RequestInit = {
+    method: 'GET',
+    redirect: 'follow',
+  }
+  fetch(endpoint, requestOptions)
+      .then(response => response.json())
+      .then(result => result.forEach((frage: Fragen) => {
+        items.value.push(frage)
+      }))
+      .catch(error => console.log('error', error))
 }
 
 function save() {
+  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
+  const endpoint = baseUrl + '/frage'
   const data: Fragen = {
     frage: FragenField.value,
-  };
-  fetchData('/frage', 'POST', {
+
+  }
+  const requestOptions: RequestInit = {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data),
-  }).then(data => {
-    console.log('Success:', data);
-  }).catch(error => console.log('error', error));
+    body: JSON.stringify(data)
+  }
+  fetch(endpoint, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data)
+      })
+      .catch(error => console.log('error', error))
 }
 
-async function fetchData(endpoint: string, method: string, options: RequestInit): Promise<any> {
-  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-  const response = await fetch(baseUrl + endpoint, { method, ...options });
-  return response.json();
-}
 
 // Lifecycle hooks
 onMounted(() => {

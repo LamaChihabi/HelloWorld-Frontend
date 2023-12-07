@@ -1,11 +1,12 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+import { createApp } from 'vue';
+import App from './App.vue';
+import HelloWorld from './components/HelloWorld.vue';
 
-const app = createApp(App)
+const app = createApp(App);
 
-app.use(router)
+// Registriere die HelloWorld-Komponente
+app.component('HelloWorld', HelloWorld);
 
-app.mount('#app')
+app.mount('#app');

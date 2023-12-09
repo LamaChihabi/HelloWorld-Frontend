@@ -32,14 +32,14 @@ defineProps<{
   title: string;
 }>()
 
-type Fragen = { id?: number, frage: string};
+type Fragen = { id?: number, text: string};
 
 const items: Ref<Fragen[]> = ref([]);
 const FragenField = ref('');
 
 function loadFragen() {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
-  const endpoint = baseUrl + '/frage'
+  const endpoint = baseUrl + '/api/v1/frage'
   const requestOptions: RequestInit = {
     method: 'GET',
     redirect: 'follow',
@@ -54,9 +54,9 @@ function loadFragen() {
 
 function save() {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL // 'http://localhost:8080' in dev mode
-  const endpoint = baseUrl + '/frage'
+  const endpoint = baseUrl + '/api/v1/frage'
   const data: Fragen = {
-    frage: FragenField.value,
+    text: FragenField.value,
 
   }
   const requestOptions: RequestInit = {

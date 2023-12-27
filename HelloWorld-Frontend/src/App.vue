@@ -4,12 +4,14 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <div>
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div class="logo">
+      <!-- Fügen Sie hier Ihr Logo hinzu, wenn vorhanden -->
+      <img src="/path/to/your/logo.png" alt="Logo" />
     </div>
+    <nav>
+      <RouterLink to="/">Home</RouterLink>
+      <RouterLink to="/about">About</RouterLink>
+    </nav>
   </header>
 
   <RouterView />
@@ -17,37 +19,40 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  background-color: #3498db; /* Blaue Hintergrundfarbe */
+  color: #fff; /* Weiße Textfarbe */
+  padding: 1rem;
+  text-align: center;
 }
 
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
+  margin-bottom: 1rem;
+}
+
+.logo img {
+  max-width: 100%;
+  height: auto;
 }
 
 nav {
-  width: 100%;
-  font-size: 14px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+  display: flex;
+  justify-content: center;
 }
 
 nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  text-decoration: none;
+  color: #fff; /* Weiße Textfarbe */
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-nav a:first-of-type {
-  border: 0;
+nav a:hover {
+  background-color: #2980b9; /* Dunkleres Blau beim Hover */
+}
+
+nav a.router-link-exact-active {
+  background-color: #2980b9; /* Dunkleres Blau für aktiven Link */
 }
 </style>

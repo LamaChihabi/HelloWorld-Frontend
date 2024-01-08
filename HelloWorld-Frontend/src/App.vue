@@ -27,6 +27,9 @@ header {
 
 .logo {
   margin-bottom: 1rem;
+  border: 2px solid #fff; /* Füge einen 2px breiten weißen Rahmen um das Logo hinzu */
+  padding: 0.5rem; /* Füge 0.5rem Innenabstand zum Rahmen hinzu */
+  border-radius: 10px; /* Füge eine abgerundete Ecke zum Rahmen hinzu */
 }
 
 .logo img {

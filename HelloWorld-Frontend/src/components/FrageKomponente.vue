@@ -1,12 +1,16 @@
 <template>
   <div>
-    <h3>{{ title }}</h3>
+    <h3 class="quiz-title">{{ title }}</h3>
     <div class="quiz-form">
       <input v-model="fragenField" placeholder="Frage" type="text">
-      <button type="button" @click="save">Speichern</button>
+      <button type="button" @click="save" class="quiz-button">
+        {{ editingId !== null ? 'Aktualisieren' : 'Speichern' }}
+      </button>
     </div>
+
+    <input v-model="searchQuery" placeholder="Frage suchen" type="text">
     <div>
-      <table>
+      <table class="quiz-table">
         <thead>
         <tr>
           <th>Frage</th>
@@ -14,89 +18,173 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-if="items.length === 0">
+        <tr v-if="filteredItems.length === 0 && !showConfirmation">
           <td colspan="2">Keine Fragen vorhanden</td>
         </tr>
-        <tr v-for="frage in items" :key="frage.id">
+        <tr v-for="frage in filteredItems" :key="frage.id">
           <td>{{ frage.text }}</td>
           <td>
-            <button @click="remove(frage.id)">Löschen</button>
+            <button @click="edit(frage)">Bearbeiten</button>
+            <button @click="confirmDelete(frage)">Löschen</button>
+            <button @click="sortQuestions('asc')" class="quiz-button">
+              A-Z <span v-if="sortOrder === 'asc'">🔼</span>
+            </button>
+            <button @click="sortQuestions('desc')" class="quiz-button">
+              Z-A <span v-if="sortOrder === 'desc'">🔽</span>
+            </button>
           </td>
         </tr>
         </tbody>
       </table>
     </div>
+
+    <div v-if="showConfirmation" class="confirmation-dialog">
+      <p>Möchten Sie diese Frage wirklich löschen?</p>
+      <button @click="deleteQuestion" class="confirm-button">Ja</button>
+      <button @click="cancelDelete" class="cancel-button">Nein</button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import type { Ref } from 'vue';
 
 defineProps<{
   title: string;
 }>()
 
-type Frage = { id?: number, text: string };
+type Frage = { id?: number; text: string };
 
 const items: Ref<Frage[]> = ref([]);
 const fragenField = ref('');
+const editingId = ref<number | null>(null);
+const showConfirmation = ref(false);
+const questionToDelete = ref<number | null>(null);
+const searchQuery = ref('');
+const sortOrder = ref<'asc' | 'desc'>('asc');
 
 function loadFragen() {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
   const endpoint = `${baseUrl}/api/v1/frage`;
   fetch(endpoint)
-      .then(response => response.json())
-      .then(result => {
+      .then((response) => response.json())
+      .then((result) => {
         items.value = result;
       })
-      .catch(error => console.error('Fehler beim Laden der Fragen:', error));
+      .catch((error) => console.error('Fehler beim Laden der Fragen:', error));
+}
+
+function sortQuestions(order: 'asc' | 'desc') {
+  items.value.sort((a, b) =>
+      order === 'asc' ? a.text.localeCompare(b.text) : b.text.localeCompare(a.text)
+  );
+  sortOrder.value = order;
 }
 
 function save() {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
   const endpoint = `${baseUrl}/api/v1/frage`;
-  const data: Frage = {
-    text: fragenField.value,
-  };
-  const requestOptions: RequestInit = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
-  fetch(endpoint, requestOptions)
-      .then(response => response.json())
-      .then(savedFrage => {
-        console.log('Erfolg:', savedFrage);
-        items.value.push(savedFrage);
-        fragenField.value = '';
-      })
-      .catch(error => console.error('Fehler beim Speichern der Frage:', error));
-}
 
-function remove(id: number | undefined) {
-  if (id !== undefined) {
-    const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-    const endpoint = `${baseUrl}/api/v1/frage/${id}`;
+  if (editingId.value !== null) {
+    const editedFrage = items.value.find((frage) => frage.id === editingId.value);
+    if (editedFrage) {
+      editedFrage.text = fragenField.value;
+
+      const requestOptions: RequestInit = {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editedFrage),
+      };
+      fetch(`${endpoint}/${editingId.value}`, requestOptions)
+          .then((response) => response.json())
+          .then(() => {
+            console.log('Erfolg: Frage aktualisiert');
+            fragenField.value = '';
+            editingId.value = null;
+            loadFragen();
+          })
+          .catch((error) => console.error('Fehler beim Aktualisieren der Frage:', error));
+    }
+  } else {
+    const data: Frage = {
+      text: fragenField.value,
+    };
+
     const requestOptions: RequestInit = {
-      method: 'DELETE',
-      redirect: 'follow',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
     };
     fetch(endpoint, requestOptions)
-        .then(response => {
-          if (response.ok) {
-            // Entferne die Frage mit der angegebenen ID aus der Liste
-            items.value = items.value.filter(frage => frage.id !== id);
-            console.log('Frage erfolgreich gelöscht.');
-          } else {
-            console.error('Fehler beim Löschen der Frage:', response.statusText);
-          }
+        .then((response) => response.json())
+        .then((savedFrage) => {
+          console.log('Erfolg: Frage gespeichert', savedFrage);
+          items.value.push(savedFrage);
+          fragenField.value = '';
         })
-        .catch(error => console.error('Fehler beim Löschen:', error));
+        .catch((error) => console.error('Fehler beim Speichern der Frage:', error));
   }
 }
+
+function edit(frage: Frage) {
+  fragenField.value = frage.text;
+  editingId.value = frage.id || null;
+}
+
+function confirmDelete(frage: Frage) {
+  if (frage.id !== undefined) {
+    showConfirmation.value = true;
+    questionToDelete.value = frage.id;
+  }
+}
+
+function deleteQuestion() {
+  if (questionToDelete.value !== null) {
+    remove(questionToDelete.value);
+  }
+  showConfirmation.value = false;
+}
+
+function cancelDelete() {
+  showConfirmation.value = false;
+}
+
+function remove(id: number) {
+  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
+  const endpoint = `${baseUrl}/api/v1/frage/${id}`;
+  const requestOptions: RequestInit = {
+    method: 'DELETE',
+    redirect: 'follow',
+  };
+  fetch(endpoint, requestOptions)
+      .then((response) => {
+        if (response.ok) {
+          items.value = items.value.filter((frage) => frage.id !== id);
+          console.log('Frage erfolgreich gelöscht.');
+        } else {
+          console.error('Fehler beim Löschen der Frage:', response.statusText);
+        }
+      })
+      .catch((error) => console.error('Fehler beim Löschen:', error));
+}
+
+const filteredItems = computed(() => {
+  let filteredItems = items.value;
+
+  if (searchQuery.value !== '') {
+    filteredItems = filteredItems.filter(
+        (frage) => frage.text.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+  }
+
+  return filteredItems;
+});
+
 
 onMounted(() => {
   loadFragen();
@@ -104,10 +192,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-h3 {
+h3.quiz-title {
   text-align: center;
   margin-bottom: 20px;
   color: #3498db;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .quiz-form {
@@ -119,55 +208,86 @@ h3 {
 
 input {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
   margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
 }
 
-button {
-  color: #fff;
-  background-color: #3498db;
+input:focus {
+  border-color: #3498db;
+}
+
+/* Verbessere den Stil der Sortierbuttons */
+.sort-button {
+  background-color: #f2f2f2; /* Light gray */
+  color: #555; /* Dark gray text */
   border: none;
-  padding: 8px 16px;
+  padding: 10px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s ease; /* Füge einen sanften Übergang hinzu */
 }
 
-button:hover {
-  background-color: #217dbb;
+.sort-button:hover {
+  background-color: #e1e1e1; /* Slightly darker gray on hover */
 }
 
-table {
+/* Add some margin to the icon for better spacing */
+.sort-button span {
+  margin-left: 5px;
+}
+
+table.quiz-table {
   margin: 0 auto;
   width: 100%;
   border-collapse: collapse;
 }
 
-th, td {
-  border: 1px solid #ddd;
+table.quiz-table th,
+table.quiz-table td {
   padding: 12px;
   text-align: left;
 }
 
-th {
+table.quiz-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table.quiz-table tr:hover {
+  background-color: #e1e1e1;
+}
+
+.confirmation-dialog {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+/* Verbessere den Stil der Aktionenbuttons */
+.confirm-button,
+.cancel-button {
   background-color: #3498db;
   color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-right: 10px;
+  transition: background-color 0.3s ease; /* Füge einen sanften Übergang hinzu */
 }
 
-tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-tr:hover {
-  background-color: #e0e0e0;
-}
-
-td button {
-  background-color: #e74c3c;
-}
-
-td button:hover {
-  background-color: #c0392b;
+.confirm-button:hover,
+.cancel-button:hover {
+  background-color: #217dbb; /* Slightly darker blue on hover */
 }
 </style>

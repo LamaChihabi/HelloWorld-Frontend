@@ -1,41 +1,131 @@
-@import './base.css';
-
 body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
+  overflow: auto; /* Änderung: overflow auf auto gesetzt */
+  background-color: rgb(40, 125, 85);
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+.antwort {
+  display: flex;
+  position: absolute;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  width: 38.43%;
+  height: 10.00%;
+  z-index: 9;
+  color: rgb(0, 0, 0);
+  overflow: hidden;
+  background-color: rgb(255, 255, 255);
+  border: solid rgb(0, 0, 0) 0px;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.56vw;
+  padding: 0px;
+  margin: 0px;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: background-color 0.4s;
+#div1 {
+  display: flex;
+  position: absolute;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  top: 8.96%;
+  left: 12.69%;
+  width: 74.69%;
+  height: 73.10%;
+  z-index: 9;
+  color: rgb(0, 0, 0);
+  overflow: hidden;
+  background-color: rgb(28, 50, 29);
+  border: solid rgb(0, 0, 0) 0px;
+  border-radius: 68px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.83vw;
+  padding: 0px;
+  margin: 0px;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.1);
-  }
+#a1 {
+  top: 55.65%;
+  left: 6.13%;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr;
-    padding: 0 2rem;
-  }
+#a3 {
+  top: 77.35%;
+  left: 6.13%;
 }
+
+#a2 {
+  top: 55.66%;
+  left: 54.48%;
+}
+
+#a4 {
+  top: 77.35%;
+  left: 54.48%;
+}
+
+#frage {
+  display: flex;
+  position: absolute;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  top: 13.40%;
+  left: 6.13%;
+  width: 86.24%;
+  height: 29.80%;
+  z-index: 9;
+  color: rgb(255, 255, 255);
+  overflow: hidden;
+  background-color: rgb(40, 125, 85);
+  border: solid rgb(169, 219, 174) 3px;
+  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.27vw;
+  padding: 0px;
+  margin: 0px;
+}
+
+#start {
+  display: flex;
+  position: absolute;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  top: 1.51%;
+  left: 0.94%;
+  width: 11.44%;
+  height: 4.14%;
+  z-index: 9;
+  color: rgb(197, 189, 189);
+  overflow: hidden;
+  background-color: rgb(118, 16, 16);
+  border: solid rgb(0, 0, 0) 0px;
+  font-family: Verdana, sans-serif;
+  font-size: 1.42vw;
+  padding: 0px;
+  margin: 0px;
+}
+
+#summe {
+  display: flex;
+  position: absolute;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  top: 86.89%;
+  left: 13.81%;
+  width: 73.57%;
+  height: 7.59%;
+  z-index: 9;
+  color: rgb(227, 237, 70);
+  overflow: hidden;
+  background-color: rgb(35, 109, 74);
+  border: solid rgb(0, 0, 0) 0px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.83vw;
+  padding: 0px;
+  margin: 0px;
+}
+

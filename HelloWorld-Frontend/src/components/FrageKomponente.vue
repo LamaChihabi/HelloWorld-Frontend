@@ -64,6 +64,7 @@ const questionToDelete = ref<number | null>(null);
 const searchQuery = ref('');
 const sortOrder = ref<'asc' | 'desc'>('asc');
 
+
 function loadFragen() {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
   const endpoint = `${baseUrl}/api/v1/frage`;
@@ -184,7 +185,6 @@ const filteredItems = computed(() => {
 
   return filteredItems;
 });
-
 
 onMounted(() => {
   loadFragen();

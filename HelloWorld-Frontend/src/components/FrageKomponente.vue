@@ -66,8 +66,10 @@ const sortOrder = ref<'asc' | 'desc'>('asc');
 
 
 function loadFragen() {
-  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
+  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:8080';
+  console.log('baseUrl:', baseUrl)
   const endpoint = `${baseUrl}/api/v1/frage`;
+  console.log('endpoint:', endpoint)
   fetch(endpoint)
       .then((response) => response.json())
       .then((result) => {
@@ -93,6 +95,7 @@ function save() {
       editedFrage.text = fragenField.value;
 
       const requestOptions: RequestInit = {
+
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +160,7 @@ function cancelDelete() {
 
 function remove(id: number) {
   const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-  const endpoint = `${baseUrl}/api/v1/frage/${id}`;
+  const endpoint = `${baseUrl}/api/v1/frage`;
   const requestOptions: RequestInit = {
     method: 'DELETE',
     redirect: 'follow',
@@ -218,30 +221,6 @@ input {
 
 input:focus {
   border-color: #3498db;
-}
-
-/* Verbessere den Stil der Sortierbuttons */
-.sort-button {
-  background-color: #f2f2f2; /* Light gray */
-  color: #555; /* Dark gray text */
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 14px;
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.3s ease; /* Füge einen sanften Übergang hinzu */
-}
-
-.sort-button:hover {
-  background-color: #e1e1e1; /* Slightly darker gray on hover */
-}
-
-/* Add some margin to the icon for better spacing */
-.sort-button span {
-  margin-left: 5px;
 }
 
 table.quiz-table {

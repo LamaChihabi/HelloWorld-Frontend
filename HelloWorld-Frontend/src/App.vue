@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+
 </script>
 
 <template>
   <header>
     <div class="logo">
       <!-- Fügen Sie hier Ihr Logo hinzu, wenn vorhanden -->
-      <img src="/path/to/your/logo.png" alt="Logo" />
+      <img src="@/assets/Quiz app.png" alt="Logo">
+
     </div>
     <nav>
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/about">About</RouterLink>
+      <RouterLink to="/login">Login</RouterLink>
+      <RouterLink to ="/Quizspiel">Quizspiel</RouterLink>
     </nav>
   </header>
 
@@ -19,22 +23,21 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 header {
-  background-color: #3498db; /* Blaue Hintergrundfarbe */
-  color: #fff; /* Weiße Textfarbe */
+  background-color: #8e44ad;
+  color: #fff;
   padding: 1rem;
   text-align: center;
 }
 
 .logo {
+  max-width: 300px;
   margin-bottom: 1rem;
-  border: 2px solid #fff; /* Füge einen 2px breiten weißen Rahmen um das Logo hinzu */
-  padding: 0.5rem; /* Füge 0.5rem Innenabstand zum Rahmen hinzu */
-  border-radius: 10px; /* Füge eine abgerundete Ecke zum Rahmen hinzu */
+
 }
 
 .logo img {
-  max-width: 100%;
-  height: auto;
+  width: 100%; /* Verwende 100% für die volle Breite des Containers */
+  height: auto; /* Lass die Höhe automatisch anpassen, um das Seitenverhältnis beizubehalten */
 }
 
 nav {
@@ -44,7 +47,7 @@ nav {
 
 nav a {
   text-decoration: none;
-  color: #fff; /* Weiße Textfarbe */
+  color: #fff;
   padding: 0.5rem 1rem;
   margin: 0 0.5rem;
   border-radius: 5px;
@@ -52,10 +55,10 @@ nav a {
 }
 
 nav a:hover {
-  background-color: #2980b9; /* Dunkleres Blau beim Hover */
+  background-color: #2980b9;
 }
 
 nav a.router-link-exact-active {
-  background-color: #2980b9; /* Dunkleres Blau für aktiven Link */
+  background-color: #2980b9;
 }
 </style>
